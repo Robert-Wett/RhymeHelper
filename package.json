@@ -1,0 +1,22 @@
+{
+  "name": "rhyme-helper",
+  "version": "1.0.0",
+  "description": "Generate words that rhyme with an input word",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "lodash": "^4.13.1"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^2.5.3",
+    "sinon": "^1.17.4"
+  },
+  "scripts": {
+    "test": "mocha --recursive"
+  },
+  "author": "Robert Wettlaufer",
+  "license": "ISC"
+}
