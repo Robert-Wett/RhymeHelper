@@ -25,10 +25,9 @@ class Tree {
   }
 
   _addChildren(parent, childInfo, word) {
-    let node = new Node(childInfo.shift(), parent);
-    parent.addChildIfNotExists(node);
+    let node = parent.addChildIfNotExists(new Node(childInfo.shift()));
     if (childInfo.length) {
-      this._addChildren(parent.children[node.key], childInfo, word);
+      this._addChildren(node, childInfo, word);
     } else {
       node.word = word;
     }

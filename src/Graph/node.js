@@ -1,5 +1,5 @@
 class Node {
-  constructor(key, parent = null, word = null, children = {}) {
+  constructor(key, word = null, children = {}) {
     this.key = key;
     this.word = word;
     this.children = children;
@@ -9,6 +9,7 @@ class Node {
     if (!this.children[node.key]) {
       this.children[node.key] = node;
     }
+    return this.children[node.key];
   }
 
   getChild(key) {

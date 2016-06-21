@@ -7,7 +7,7 @@ const Tree = require('../Graph/tree');
 const Node = require('../Graph/node');
 
 const WORD_DICT = path.resolve('./resource/cmudict-0.7b.txt');
-const MDEPTH = 4;
+const MDEPTH = 2;
 
 class RhymeHelper {
   constructor() {
@@ -15,40 +15,44 @@ class RhymeHelper {
     this.tree = new Tree();
     this.lookup = {};
   }
-  // 18442642214
 
-  traverseTreeForWords(node, numMatched, phenomes, list) {
-    const nextKey = phenomes.shift();
-    if (numMatched < MDEPTH && node.children[nextKey]) {
-      return this.traverseTreeForWords(node.children[nextKey], numMatched + 1, [...phenomes], list);
-    } else {
-      if (node.word) {
-        list.push({
-          display: `[${numMatched}] ${node.word}: ${this.lookup[node.word].reverse().join(' ')}`,
-          numMatched
-        });
+  getRhyme(word) {
+    return this._readInFileAndBuildTable().then(() => {
+      let wordInfo = [...this.lookup[word.toUpperCase()]];
+      let rootNode = this.tree.getChild(wordInfo.shift());
+      for (let i = 1; i < MDEPTH; i++) {
+        rootNode = rootNode.getChild(wordInfo.shift());
       }
-      _.forIn(node.children, v => {
-        if (nextKey && v.key === nextKey) {
-          this.traverseTreeForWords(v, numMatched + 1, [...phenomes], list);
-        } else {
-          this.traverseTreeForWords(v, numMatched, [...phenomes], list);
-        }
-      });
-    }
+
+      return Promise.all(
+        this.getWordsUnderNode(rootNode, [...wordInfo], word.toUpperCase())
+      ).then(p => {
+        p.sort((a, b) => {
+          return - (a.strength - b.strength)
+        });
+
+        return p.filter(p => p.word !== word.toUpperCase());
+      })
+    });
   }
 
-  rhymesWith(word) {
-    return this._readInFileAndBuildTable().then(() => {
-      let wordInfo = this.lookup[word.toUpperCase()];
-      let start = this.tree.getChild(wordInfo.shift());
-      let wordList = [];
-      this.traverseTreeForWords(start, 1, wordInfo, wordList);
-      wordList.sort((a, b) => {
-        return - (a.numMatched - b.numMatched)
-      });
-      return Promise.resolve(wordList);
-    });
+  getWordsUnderNode(node, phenomes, searchWord) {
+    let list = [].concat(
+      Object.keys(node.children).map(
+        k => this.getWordsUnderNode(node.children[k], [...phenomes].slice(1), searchWord)
+      )
+    );
+
+    if (node.word) {
+      let strength = getStrength(this.lookup[searchWord], this.lookup[node.word]);
+      list.push(Promise.resolve({
+        word: node.word,
+        display: `[${strength}] ${node.word}: ${[...this.lookup[node.word]].reverse().join(' ')}`,
+        strength
+      }));
+    }
+
+    return _.flattenDeep(list);
   }
 
   _readInFileAndBuildTable() {
@@ -74,6 +78,19 @@ class RhymeHelper {
       });
     });
   }
+}
+
+const getStrength = (baseWord, matchWord) => {
+  let strength = 0;
+  for (let i = 0; i < baseWord.length && i < matchWord.length; i++) {
+    if (baseWord[i] === matchWord[i]) {
+      strength++;
+    } else {
+      return strength;
+    }
+  }
+
+  return strength;
 }
 
 module.exports = RhymeHelper;
