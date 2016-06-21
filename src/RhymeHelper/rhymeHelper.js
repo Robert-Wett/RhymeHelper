@@ -10,7 +10,8 @@ const WORD_DICT = path.resolve('./resource/cmudict-0.7b.txt');
 const MDEPTH = 2;
 
 class RhymeHelper {
-  constructor() {
+  constructor(useStrict = true) {
+    this.useStrict = useStrict;
     this.filePath = WORD_DICT;
     this.tree = new Tree();
     this.lookup = {};
@@ -66,18 +67,26 @@ class RhymeHelper {
     reader.on('line', line => {
       let _lineArr = line.trim().split(' ').filter(v => v !== '');
       let [key, pronunciation] = [_lineArr.shift().toUpperCase(), _lineArr.reverse()];
+
+      if (!this.useStrict) {
+        pronunciation = removeStress(pronunciation);
+      }
       // Add to table to get word lookups
       this.lookup[key] = [...pronunciation]
       // Add to tree for finding comparisons
       this.tree.addWord(key, [...pronunciation]);
     });
-
+    
     return new Promise(resolve => {
       reader.on('close', () => {
         resolve();
       });
     });
   }
+}
+
+const removeStress = (phenomes) => {
+  return phenomes.map(p => p.replace(/\d/g, ''));
 }
 
 const getStrength = (baseWord, matchWord) => {
