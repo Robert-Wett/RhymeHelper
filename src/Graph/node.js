@@ -17,7 +17,7 @@ class Node {
   }
 
   get hasChildren() {
-    return Object.keys(this.children).length;
+    return !!Object.keys(this.children).length;
   }
 }
 
