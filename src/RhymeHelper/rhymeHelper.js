@@ -18,7 +18,7 @@ class RhymeHelper {
   }
 
   getRhyme(word) {
-    return this._readInFileAndBuildTable().then(() => {
+    return this._buildTable().then(() => {
       let wordInfo = [...this.lookup[word.toUpperCase()]];
       let rootNode = this.tree.getChild(wordInfo.shift());
       for (let i = 1; i < MDEPTH; i++) {
@@ -26,7 +26,7 @@ class RhymeHelper {
       }
 
       return Promise.all(
-        this.getWordsUnderNode(rootNode, [...wordInfo], word.toUpperCase())
+        this._getWordsUnderNode(rootNode, [...wordInfo], word.toUpperCase())
       ).then(p => {
         p.sort((a, b) => {
           return - (a.strength - b.strength)
@@ -37,10 +37,10 @@ class RhymeHelper {
     });
   }
 
-  getWordsUnderNode(node, phenomes, searchWord) {
+  _getWordsUnderNode(node, phenomes, searchWord) {
     let list = [].concat(
       Object.keys(node.children).map(
-        k => this.getWordsUnderNode(node.children[k], [...phenomes].slice(1), searchWord)
+        k => this._getWordsUnderNode(node.children[k], [...phenomes].slice(1), searchWord)
       )
     );
 
@@ -56,11 +56,7 @@ class RhymeHelper {
     return _.flattenDeep(list);
   }
 
-  _readInFileAndBuildTable() {
-    if (this.tree.isBuilt()) {
-      return Promise.resolve();
-    }
-
+  _readAndParseFile() {
     const readStream = fs.createReadStream(path.resolve(this.filePath));
     const reader = readline.createInterface({ input: readStream });
 
@@ -76,12 +72,20 @@ class RhymeHelper {
       // Add to tree for finding comparisons
       this.tree.addWord(key, [...pronunciation]);
     });
-    
+
     return new Promise(resolve => {
       reader.on('close', () => {
         resolve();
       });
     });
+  }
+
+  _buildTable() {
+    if (this.tree.isBuilt()) {
+      return Promise.resolve();
+    }
+
+    return this._readAndParseFile();
   }
 }
 

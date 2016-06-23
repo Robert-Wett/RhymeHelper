@@ -1,16 +1,50 @@
 const expect = require('chai').expect;
+const sinon = require('sinon');
 const _ = require('lodash');
 
 const RhymeHelper = require('../../src/RhymeHelper/rhymeHelper');
 
 describe('RhymeHelper', () => {
   let rhymeHelper;
+  
+  describe('#getRhyme()', () => {
+    before(() => {
+      rhymeHelper = new RhymeHelper();
+      sinon.spy(rhymeHelper, '_readAndParseFile');
+    });
+
+    after(() => {
+      rhymeHelper._readAndParseFile.restore();
+    });
+
+    it('returns matches for word "eternity"', function(done) {
+      this.timeout(3000);
+      rhymeHelper.getRhyme('eternity').then(wordlist => {
+        expect(wordlist).to.be.ok;
+        expect(wordlist.length).to.be.at.least(1);
+        done();
+      });
+    });
+
+    it('builds the lookup tree on first get', () => {
+      expect(rhymeHelper._readAndParseFile.calledOnce).to.be.true;
+    });
+
+    it('does not rebuild lookup tree on subsequent requests', done => {
+      rhymeHelper.getRhyme('eternity').then(wordlist => {
+        expect(wordlist).to.be.ok;
+        expect(wordlist.length).to.be.at.least(1);
+        expect(rhymeHelper._readAndParseFile.calledOnce).to.be.true;
+        done();
+      });
+    });
+  });
 
   describe('Strict Mode', () => {
     before(function(done){
-      this.timeout(5000);
+      this.timeout(3000);
       rhymeHelper = new RhymeHelper();
-      rhymeHelper._readInFileAndBuildTable().then(done);
+      rhymeHelper._buildTable().then(done);
     });
 
     it('Returns 2 hits with a match strength of 7 for "solution"', done => {
@@ -31,9 +65,9 @@ describe('RhymeHelper', () => {
 
   describe('Loose Mode', () => {
     before(function(done){
-      this.timeout(5000);
+      this.timeout(3000);
       rhymeHelper = new RhymeHelper(false);
-      rhymeHelper._readInFileAndBuildTable().then(done);
+      rhymeHelper._buildTable().then(done);
     });
 
     it('Returns 4 hits for "noir" in loose mode', function(done) {

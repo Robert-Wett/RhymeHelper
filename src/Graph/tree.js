@@ -6,7 +6,7 @@ class Tree {
   }
 
   isBuilt() {
-    return Object.keys(this.tree).length;
+    return !!Object.keys(this.tree).length;
   }
 
   getChild(key) {
