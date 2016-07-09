@@ -15,6 +15,7 @@ class RhymeHelper {
     this.filePath = WORD_DICT;
     this.tree = new Tree();
     this.lookup = {};
+    return this;
   }
 
   getRhyme(word) {
