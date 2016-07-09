@@ -36,6 +36,10 @@ class RhymeHelper {
       })
     });
   }
+  
+  getWordPhenomes(word) {
+    return this.lookup[word.toUpperCase()];
+  }
 
   _getWordsUnderNode(node, phenomes, searchWord) {
     let list = [].concat(
