@@ -6,6 +6,12 @@ const rhymeHelper = new RhymeHelper();
 const rhymeHelperLoose = new RhymeHelper(false);
 const app = express();
 
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
+
 app.get('/:word', (req, res) => {
   const rhymer = req.query.loose ? rhymeHelperLoose : rhymeHelper;
 
