@@ -19,6 +19,9 @@
     "start": "node server.js",
     "test": "mocha --recursive"
   },
+  "engines": {
+    "node": "6.1.0"
+  },
   "author": "Robert Wettlaufer",
   "license": "ISC"
 }
