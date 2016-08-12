@@ -16,6 +16,7 @@
     "sinon": "^1.17.4"
   },
   "scripts": {
+    "start": "node server.js",
     "test": "mocha --recursive"
   },
   "author": "Robert Wettlaufer",
