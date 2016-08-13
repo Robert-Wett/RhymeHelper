@@ -17,7 +17,7 @@ app.get('/:word', (req, res) => {
 
   rhymer.getRhyme(req.params.word || 'orange')
     .then(words => {
-      res.json(words);
+      res.jsonp(words);
     })
     .catch(e => {
       res.status(500).send();
