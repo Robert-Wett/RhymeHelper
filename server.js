@@ -12,6 +12,8 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use('/', express.static('public', {index: 'index.html'}));
+
 app.get('/:word', (req, res) => {
   const rhymer = req.query.loose ? rhymeHelperLoose : rhymeHelper;
 
