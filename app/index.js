@@ -1,79 +1,79 @@
-let { h, render, Component } = preact;  // import { ... } from 'preact';
-/** @jsx h */
+import { h, render, Component } from 'preact';
+import { Well, PageHeader } from 'react-bootstrap';
 
+class Header extends Component {
+	render() {
+		return (
+			<PageHeader>Rhyme Helper</PageHeader>
+		);
+	}
+}
+
+class Clock extends Component {
+	state = {
+		words: []
+	}
+
+	componentWillMount() {
+		fetch('/orange').then(r => r.json()).then(words => this.setState({words: words.map(w => w.display)}));
+	}
+	
+	render() {
+		return (
+			<div>
+				{this.state.words.map(w => <Well>{w}</Well>)}
+			</div>
+		)
+	}
+}
+
+class TermForm extends
 
 class App extends Component {
-  state = {
-    text: 'hello',
-    loading: false
-  };
-
-  render({}, { text }) {
-    return (
-      <app>
-        <header>
-          <h1>
-            Preact Kickstart
-            <sub>powered by <a href="https://github.com/developit/preact" target="_blank">preact</a></sub>
-          </h1>
-          <input type="text" placeholder="Enter text..." value={ text } onInput={ this.linkState('text') } />
-        </header>
-        <main>
-          <BigLetters text={ text } />
-        </main>
-      </app>
-    );
-  }
+	render() {
+		return (
+			<div>
+				<Header />
+				<Clock />
+			</div>
+		);
+	}
 }
+// render an instance of Clock into <body>:
+render(<App />, document.body);
 
 class RhymeItems extends Component {
-  state = {
-    words: [],
-    term: '',
-    loading: false,
-    refreshing: false
-  };
+	state = {
+		words: [],
+		term: '',
+		loading: false,
+		refreshing: false
+	};
 
-  more = () => {
+	componentDidMount() {
+		this.setState({ term: this.props.term });
+	}
 
-    //this.setState({loading: true });
-    
-    return Promise.resolve(getPayload());
+	componentWillReceiveProps({ term }) {
+		if (terms!==this.state.term) {
+			this.setState({ term });
+		}
+	}
 
-    /*
-    fetch(`rhymehelper.us-west-2.elasticbeanstalk.com/${this.state.term}`)
-      .then(words => {
-        console.log(words);
-        this.setState({ words });
-      })
-      .finally(() => {
-        this.setState({loading: false});
-      });
-      */
-  };
+	render({ }, { term, words, loading }={}) {
+		if (term && term !== this.term && !loading) this.more();
 
-  componentDidMount() {
-    this.setState({ term: this.props.term });
-  }
-
-  componentWillReceiveProps({ term }) {
-    if (terms!==this.state.term) {
-      this.setState({ term });
-    }
-  }
-
-  render({ }, { term, words, loading }={}) {
-    if (term && term !== this.term && !loading) this.more();
-
-    return (
-      <div class="rhyme-item-list">
-        { words.map( (word, i) => (
-          <RhymeItem key={ word.word + i } { ...word } />
-        )) }
-      </div>
-    );
-  }
+		return (
+			<div class="rhyme-item-list">
+				{ words.map( (word, i) => (
+					<RhymeItem key={ word.word + i } { ...word } />
+				)) }
+			</div>
+		);
+	}
 }
+
+	/*
 
 class RhymeItem extends Component {
   shouldComponentUpdate({ id }) {
@@ -108,3 +108,4 @@ const getPayload = () => {
 
 // Start 'er up:
 render(<App />, document.body);
+*/

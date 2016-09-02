@@ -12,7 +12,11 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use('/', express.static('public', {index: 'index.html'}));
+app.use('/dist', express.static(__dirname + '/dist'));
+
+app.get('/', (req, res) => {
+	res.sendFile('index.html', { root: __dirname });
+})
 
 app.get('/:word', (req, res) => {
   const rhymer = req.query.loose ? rhymeHelperLoose : rhymeHelper;
