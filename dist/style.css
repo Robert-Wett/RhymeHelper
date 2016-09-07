@@ -1,13 +1,13 @@
-.container {
+.rhymeList {
     display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
 }
-
-.term-form {
-    width: 100%;
-}
-
-.wtf-input {
-  margin-bottom: 10px;
-  padding: 5px;
-  width: 100%;
+.main-title {
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: 2rem;
+    /*font-family: 'Roboto', serif;*/
 }
