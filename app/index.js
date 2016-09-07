@@ -10,31 +10,32 @@ class Container extends Component {
 		rhymes: []
 	};
 
-	loadRhymes = () => {
-		if (this.state.loading || !this.state.term) {
-			return;
-		}
+	loadRhymes = (term) => {
+		this.setState({term, loading: true});
 
-		this.setState({loading: true});
-
-		fetch(`/api/${this.state.term}`)
+		fetch(`/api/${term}`)
 			.then(asJson)
 			.then(rhymes => {
 				this.setState({rhymes, loading: false});
 			})
 			.catch(e => {
-				this.setState({loading: false})
+				this.setState({rhymes: [], loading: false})
 			});
 	};
 
 	handleChange(e) {
-		this.setState({term: e.target.value});
-		this.loadRhymes();
+		const _term = e.target.value.toLowerCase();
+
+		if (this.state.loading || !_term || _term === this.state.term) {
+			return;
+		}
+
+		this.loadRhymes(_term);
 	}
 
 	componentDidMount() {
 		if (!this.state.rhymes.length)
-			this.loadRhymes(this.state.term);
+			this.loadRhymes(this.state.term, true);
 	}
 
 	render({}, {term}={}){
