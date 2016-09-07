@@ -20,6 +20,12 @@ class RhymeHelper {
   getRhyme(word) {
     return this._buildTable().then(() => {
       let wordInfo = [...this.lookup[word.toUpperCase()]];
+
+			// We don't have this word in our bank
+			if (!wordInfo) {
+				return [];
+			}
+
       let rootNode = this.tree.getChild(wordInfo.shift());
       for (let i = 1; i < MDEPTH; i++) {
         rootNode = rootNode.getChild(wordInfo.shift());

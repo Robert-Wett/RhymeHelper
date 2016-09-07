@@ -11,14 +11,25 @@ describe('RhymeHelper', () => {
     before(() => {
       rhymeHelper = new RhymeHelper();
       sinon.spy(rhymeHelper, '_readAndParseFile');
+			sinon.spy(rhymeHelper, '_getWordsUnderNode');
     });
 
     after(() => {
       rhymeHelper._readAndParseFile.restore();
+			rhymeHelper._getWordsUnderNode.restore();
     });
 
-    it('returns matches for word "eternity"', function(done) {
-      this.timeout(3000);
+		it('does not try to compute anything it doesnt have a lookup value for', function(done) {
+			//dis bitch fails
+			this.timeout(5000);
+			rhymeHelper.getRhyme('weinerzzzzzzzzz').then(wordlist => {
+				expect(wordlist.length).to.not.be.ok;
+				expect(rhymeHelper._getWordsUnderNode.calledOnce).to.be.false;
+				done();
+			})
+		});
+		
+    it('returns matches for word "eternity"', done => {
       rhymeHelper.getRhyme('eternity').then(wordlist => {
         expect(wordlist).to.be.ok;
         expect(wordlist.length).to.be.at.least(1);
