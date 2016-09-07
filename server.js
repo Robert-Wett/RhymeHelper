@@ -18,7 +18,7 @@ app.get('/', (req, res) => {
 	res.sendFile('index.html', { root: __dirname });
 })
 
-app.get('/:word', (req, res) => {
+app.get('/api/:word', (req, res) => {
   const rhymer = req.query.loose ? rhymeHelperLoose : rhymeHelper;
 
   rhymer.getRhyme(req.params.word || 'orange')
@@ -32,7 +32,8 @@ app.get('/:word', (req, res) => {
 
 rhymeHelper._buildTable()
 .then(() => {
-  return rhymeHelperLoose._buildTable();
+	return Promise.resolve();
+  //return rhymeHelperLoose._buildTable();
 })
 .then(() => {
   app.listen(PORT, () => {
