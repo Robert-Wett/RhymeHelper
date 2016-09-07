@@ -38,7 +38,15 @@ class Container extends Component {
 	}
 
 	render({}, {term}={}){
-		const rhymes = this.state.rhymes.map(r => <Well>{r.display}</Well>);
+		const rhymes = this.state.rhymes.map(r => {
+			return (
+				<Well>
+					<p>{r.word}</p>
+					<p># of phenomes matched: {r.strength}</p>
+				</Well>
+			);
+		});
+
 		return (
 			<div className="container">
 				<Header />

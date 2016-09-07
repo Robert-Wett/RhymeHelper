@@ -6,10 +6,10 @@ Using the input from CMU's [SPHINX Project](http://cmusphinx.sourceforge.net/), 
 The API is being hosted on [Heroku](http://getrhyme.herokuapp.com) and on [AWS](http://rhymehelper.us-west-2.elasticbeanstalk.com/).
 
 ### Routes
-#### `GET /:word`
+#### `GET /api/:word`
  >Get a list of words matching at least 2 phonemes sorted by strength, in strict mode
 
-#### `GET /:word?loose=true`
+#### `GET /api/:word?loose=true`
  >Enable loose mode
 
 #### Example output for 'ORANGE' (`GET /orange`)
